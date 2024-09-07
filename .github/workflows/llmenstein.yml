@@ -1,0 +1,35 @@
+name: PR Review with LLMenstein
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  review_pr:
+    if: github.event.label.name == 'Ready for Review'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Review PR with Ollama
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLICKUP_TOKEN: ${{ secrets.CLICKUP_TOKEN }}
+          OLLAMA_API_URL: "http://your-ollama-api-url:11434"
+          CHECKLIST_API_URL: "http://your-checklist-api-url"
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python pr_review.py
