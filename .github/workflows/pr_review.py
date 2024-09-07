@@ -15,13 +15,12 @@ def post_review_comments(all_reviews: Dict[str, Any]) -> requests.Response:
 
     # Create individual review comments for each file
     comments = []
-    summary_body = "## 📝 Code Review Summary\n\n"
+    summary_body = "## 🤖 AI-Powered Code Review Summary\n\n"
 
     for file_name, review in all_reviews.items():
-        file_body = f"### 📄 {file_name}\n\n"
-
+        file_body = f"### 📄 {file_name} - AI Analysis\n\n"
         if "error" in review:
-            file_body += f"❌ Error reviewing {file_name}: {review['error']}\n\n"
+            file_body += f"❌ **Error reviewing {file_name}:** {review['error']}\n\n"
         else:
             file_body += f"**🔍 Overall Assessment:** {review['general_assessment']}\n\n"
 
@@ -32,13 +31,14 @@ def post_review_comments(all_reviews: Dict[str, Any]) -> requests.Response:
 
             file_body += "**⚠️ Issues:**\n"
             for issue in review["issues"]:
-                file_body += f"- **{issue['severity']}** (Line {issue['line']}): {issue['description']}\n"
-                file_body += f"  Suggestion: {issue['suggestion']}\n\n"
+                file_body += f"- **Severity:** {issue['severity']} (Line {issue['line']}): {issue['description']}\n"
+                file_body += f"  **Suggestion:** {issue['suggestion']}\n\n"
 
             file_body += "**📋 Checklist Violations:**\n"
             for violation in review["checklist_violations"]:
-                file_body += f"- **{violation['item']}**: {violation['explanation']}\n"
-                file_body += f"  Recommendation: {violation['recommendation']}\n\n"
+                file_body += f"- **Item:** {violation['item']}\n"
+                file_body += f"  **Explanation:** {violation['explanation']}\n"
+                file_body += f"  **Recommendation:** {violation['recommendation']}\n\n"
 
         comments.append({"path": file_name, "body": file_body.strip(), "position": 1})
 
